@@ -1,0 +1,3 @@
+https://localhost:7141/Add/Book
+https://localhost:7141/Book/1
+https://localhost:7141/Book/2

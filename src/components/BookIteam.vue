@@ -1,8 +1,4 @@
 <template>
-  <div class="app">
-   
-<br>    
-<template>
     <div class="app">
       <NavigationBar/>
       <div id="Hedder">
@@ -14,23 +10,24 @@
   :visible.sync="drawerbook"
   :direction="directionbook"
   size="55%">
-  <h2>Book Application</h2>
+  <h2>New Resident Application</h2>
       <book-form  :book-to-edit="bookToEdit" :bookData="bookData" @book-created="handleBookCreated" @book-updated="handleBookUpdated"/>
 </el-drawer>
 
 <el-row>
       <el-col :span="24"><div class="grid-content bg-purple-dark"></div></el-col>
 </el-row>
-<br>
-<br>
-    <el-button type="primary" @click="drawerbook = true" icon="el-icon-plus"  >
-      Click Hear to Ask......
-    </el-button>
+    <h2 class="table-title">Resident Table</h2>
+    <div class="button-container">
    
+   
+    </div>
+    <BookTable :bookData="bookData" @edit-book="handleEditBook" @delete-book="deleteBook"/>
     <el-row>
       <el-col :span="24"><div class="grid-content bg-purple-dark"></div></el-col>
     </el-row>
     </div>
+    <Fotter/>
         </main>
       </div>
 
@@ -39,24 +36,17 @@
 
 
 
-
-
-
-    <br>
-    <Fotter />
-
-  </div>
-</template>
-
 <script>
 import axios from 'axios';
 import Headder from './Headder.vue';
 import Fotter from './Fotter.vue';
+import BookTable from './BookTable.vue';
 import BookForm from './BookForm.vue';
 import NavigationBar from './NavigationBar.vue';
 import 'C:/Users/janit/source/repos/Nayana mama front/my-vue-project/src/StyleSheet.css'
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { mapState } from 'vuex';
 
 
 export default {
@@ -64,6 +54,7 @@ export default {
   components: {
     Headder,
     Fotter,
+    BookTable,
     BookForm,
     NavigationBar
 },
@@ -81,8 +72,12 @@ export default {
         book.id.toLowerCase().includes(searchLower)
       );
   },
+  ...mapState(['loggedInUser', 'userDetails']),
+        loggedInUserBranch() {
+      return this.loggedInUser ? this.loggedInUser.branch : null;
  
   },
+},
 
   data() {
       return {
@@ -92,21 +87,7 @@ export default {
           bookTitle: '',    
           author: '',
         },
-        rules: {
-            bookId: [
-              { required: true, message: 'Please enter the Book ID', trigger: 'blur' },
-              { validator: this.validateBookId, trigger: 'blur'},
-            ],
-            bookTitle:[
-            { required: true, message: 'Please enter the Book Title', trigger: 'blur' },
-
-            ],
-            author:[
-            { required: true, message: 'Please enter the Book Author', trigger: 'blur' },
-
-            ]
-
-    },
+        
 
 
           bookData: [],
@@ -129,13 +110,6 @@ export default {
            
           handleBookCreated(newBook) {
       this.bookData.push(newBook); // Update the bookData array
-      this.$notify.success({
-                  title: 'Patient Created',
-                  message: 'The Pratient has been created successfully!',
-                  offset: 100,
-                });
-                this.drawerbook = false;
-
     },
     handleBookUpdated(updatedBook) {
       const index = this.bookData.findIndex(book => book.id === updatedBook.id);
@@ -146,28 +120,41 @@ export default {
 
 
         fetchData() {
-          axios.get('https://localhost:7095/NewUser')
-            .then(response => {
-              this.bookData = response.data;
+          const apiUrl = 'https://localhost:7095/NewUser';
 
-            })
-            .catch(error => {
-              console.error('Error fetching data:', error);
-            });
+            // Check if the branch is "All"
+            if (this.userDetails.branch === 'All') {
+              axios.get(apiUrl)
+                .then(response => {
+                  this.bookData = response.data;
+                })
+                .catch(error => {
+                  console.error('Error fetching data:', error);
+                });
+            } else {
+              // Fetch data with filtering based on branch
+              axios.get(apiUrl)
+                .then(response => {
+                  this.bookData = response.data.filter(product => product.branch === this.userDetails.branch);
+                })
+                .catch(error => {
+                  console.error('Error fetching data:', error);
+                });
+            }
         },
-
+       
 
         deleteBookById(bookId) {
-          console.log('Book deleted successfully:', bookId);
+          console.log('Resident deleted successfully:', bookId);
 
         axios.delete(`https://localhost:7095/Newuser/${bookId}`)
           .then(response => {
-            console.log('Book deleted successfully:', response.data);
+            console.log('Resident deleted successfully:', response.data);
             // Update the bookData array to remove the deleted book
             this.bookData = this.bookData.filter(book => book.id !== bookId);
           })
           .catch(error => {
-            console.error('Error deleting book:', error);
+            console.error('Error deleting Resident:', error);
           });
           console.log(bookId);
       },
@@ -175,14 +162,14 @@ export default {
 
       
         open(bookIndex) {
-            this.$confirm('Are you sure you want to delete this book? This action cannot be undone.', 'Delete Book',  {
+            this.$confirm('Are you sure you want to delete this Resident? This action cannot be undone.', 'Delete Resident',  {
               confirmButtonText: 'OK',
               cancelButtonText: 'Cancel',
               type: 'warning'
             }).then(() => {
               this.$message({
                 type: 'success',
-                message: 'Book deleted successfully'
+                message: 'Resident deleted successfully'
               });
               this.handleDelete(bookIndex,1);
             }).catch(() => {
@@ -194,14 +181,14 @@ export default {
           },
         
           deleteBook(tell) {
-        this.$confirm('Are you sure you want to delete this book? This action cannot be undone.', 'Delete Book', {
+        this.$confirm('Are you sure you want to delete this Resident? This action cannot be undone.', 'Delete Resident', {
           confirmButtonText: 'OK',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
           this.$message({
             type: 'success',
-            message: 'Book deleted successfully'
+            message: 'Resident deleted successfully'
           });
           this.deleteBookById(tell);
           }).catch(() => {
@@ -306,35 +293,11 @@ console.log(appContainer)
 </script>
 
 <style scoped>
+/* Style the main container */
 .hello {
   background: linear-gradient(rgba(255, 255, 255, 0.534), rgba(255, 255, 255, 0.7)), url('@/assets/logo1.png') center/cover no-repeat;
   min-height: 100vh;
   overflow: hidden;
 }
 
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px; /* Adjust padding as needed */
-}
-
-.logo {
-  margin-right: 10px;
-}
-
-h1 {
-  margin: 10px;
-}
-
-/* Add other styles for your components as needed */
-#Hedder {
-  /* Add styles for the header section */
-}
-
-#hello {
-  /* Add styles for the main content section */
-}
-
 </style>
-

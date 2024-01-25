@@ -1,4 +1,4 @@
-# my-vue-project
+# front
 
 ## Project setup
 ```
