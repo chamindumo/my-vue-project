@@ -63,7 +63,10 @@ import NavigationBar from './NavigationBar.vue';
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { mapState } from 'vuex';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
+const db = firebase.firestore();
 
 import 'C:/Users/janit/source/repos/Nayana mama front/my-vue-project/src/StyleSheet.css'
 
@@ -313,28 +316,29 @@ export default {
             return moment(date).format('MMM D, YYYY');
         },
         fetchData() {
-            const apiUrl = 'https://localhost:7095/Regested';
+  // Assuming 'products' is the name of your Firestore collection
+  const collectionRef = db.collection('products');
 
-            // Check if the branch is "All"
-            if (this.userDetails.role === 'Admin' || this.userDetails.role === 'Super Admin' ) {
-              axios.get(apiUrl)
-                .then(response => {
-                  this.productData = response.data;
-                })
-                .catch(error => {
-                  console.error('Error fetching data:', error);
-                });
-            } else if(this.userDetails.role === 'Worker') {
-              // Fetch data with filtering based on branch
-              axios.get(apiUrl)
-                .then(response => {
-                  this.productData = response.data.filter(product => product.branch === this.userDetails.branch);
-                })
-                .catch(error => {
-                  console.error('Error fetching data:', error);
-                });
-            }
-           },
+  // Check if the branch is "All"
+  if (this.userDetails.role === 'Admin' || this.userDetails.role === 'Super Admin') {
+    collectionRef.get()
+      .then(querySnapshot => {
+        this.productData = querySnapshot.docs.map(doc => doc.data());
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  } else if (this.userDetails.role === 'Worker') {
+    // Fetch data with filtering based on branch
+    collectionRef.where('branch', '==', this.userDetails.branch).get()
+      .then(querySnapshot => {
+        this.productData = querySnapshot.docs.map(doc => doc.data());
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }
+},
         deleteproduct( Id) {
           console.log(Id)
             this.$confirm('Are you sure you want to delete this Resident? This action cannot be undone.', 'Delete Resident', {

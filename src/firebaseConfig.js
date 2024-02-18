@@ -1,11 +1,10 @@
 export default {
-  apiKey: "AIzaSyDTOq4NBxYazZ5yMYRxKLedfN7zUTVPbcs",
-  authDomain: "kiwisuit-a01b0.firebaseapp.com",
-  databaseURL: "https://kiwisuit-a01b0-default-rtdb.firebaseio.com",
-  projectId: "kiwisuit-a01b0",
-  storageBucket: "kiwisuit-a01b0.appspot.com",
-  messagingSenderId: "397470845673",
-  appId: "1:397470845673:web:e173a0c7158539c9abbe78",
-  measurementId: "G-QVX1EF4DN3"
+  apiKey: "AIzaSyAjuVfu88lnsfayS6R6KVsTXfNbp8rclsI",
+  authDomain: "hello-8524e.firebaseapp.com",
+  databaseURL: "https://hello-8524e-default-rtdb.firebaseio.com",
+  projectId: "hello-8524e",
+  storageBucket: "hello-8524e.appspot.com",
+  messagingSenderId: "681241554696",
+  appId: "1:681241554696:web:97f076e2b754355a8986bd",
+  measurementId: "G-BFMFYQV9VF"
 };
-

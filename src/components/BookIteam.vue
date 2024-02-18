@@ -37,7 +37,6 @@
 
 
 <script>
-import axios from 'axios';
 import Headder from './Headder.vue';
 import Fotter from './Fotter.vue';
 import BookTable from './BookTable.vue';
@@ -47,7 +46,9 @@ import 'C:/Users/janit/source/repos/Nayana mama front/my-vue-project/src/StyleSh
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { mapState } from 'vuex';
-
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+const db = firebase.firestore();
 
 export default {
   name: 'HelloWorld',
@@ -119,45 +120,30 @@ export default {
     },
 
 
-        fetchData() {
-          const apiUrl = 'https://localhost:7095/NewUser';
+    fetchData() {
+  // Assuming 'newUsers' is the name of your Firestore collection
+  const collectionRef = db.collection('newUsers');
 
-            // Check if the branch is "All"
-            if (this.userDetails.branch === 'All') {
-              axios.get(apiUrl)
-                .then(response => {
-                  this.bookData = response.data;
-                })
-                .catch(error => {
-                  console.error('Error fetching data:', error);
-                });
-            } else {
-              // Fetch data with filtering based on branch
-              axios.get(apiUrl)
-                .then(response => {
-                  this.bookData = response.data.filter(product => product.branch === this.userDetails.branch);
-                })
-                .catch(error => {
-                  console.error('Error fetching data:', error);
-                });
-            }
-        },
-       
-
-        deleteBookById(bookId) {
-          console.log('Resident deleted successfully:', bookId);
-
-        axios.delete(`https://localhost:7095/Newuser/${bookId}`)
-          .then(response => {
-            console.log('Resident deleted successfully:', response.data);
-            // Update the bookData array to remove the deleted book
-            this.bookData = this.bookData.filter(book => book.id !== bookId);
-          })
-          .catch(error => {
-            console.error('Error deleting Resident:', error);
-          });
-          console.log(bookId);
-      },
+  // Check if the branch is "All"
+  if (this.userDetails.branch === 'All') {
+    collectionRef.get()
+      .then(querySnapshot => {
+        this.bookData = querySnapshot.docs.map(doc => doc.data());
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  } else {
+    // Fetch data with filtering based on branch
+    collectionRef.where('branch', '==', this.userDetails.branch).get()
+      .then(querySnapshot => {
+        this.bookData = querySnapshot.docs.map(doc => doc.data());
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }
+},
       
 
       
