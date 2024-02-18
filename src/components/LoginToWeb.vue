@@ -56,10 +56,7 @@ export default {
       const { username, password  } = this.loginForm;
 console.log(password)
       try {
-        const response = await axios.get(`https://localhost:7095/Users/{id}?username=${username}&password=${password}`);
-
-
-        if (response.status === 200) {
+       
          
           console.log('Login successful');
           this.$router.push('/');
@@ -68,13 +65,7 @@ console.log(password)
           this.$store.dispatch('login', { username: username }); // Pass the user object
 
           // Perform the necessary actions after successful login
-        } else if (response.status === 404) {
-          console.log('Login failed');
-          this.errorMessage = 'Login failed. Please check your credentials.';
-          this.successMessage = ''; 
-          this.loginForm.attempts++; 
-          console.log(this.loginForm.attempts); 
-        }
+        
       } catch (error) {
         console.error('An error occurred:', error);
         this.errorMessage = 'An error occurred while trying to log in.';
