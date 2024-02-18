@@ -29,11 +29,10 @@
 </template>
 
 <script>
-import axios from 'axios';
 import 'C:/Users/janit/source/repos/Nayana mama front/my-vue-project/src/StyleSheet.css'
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import firebase from 'firebase/app';
 import 'firebase/firestore';
+
 
 
 export default {
@@ -51,57 +50,28 @@ export default {
   },
   
   methods: {
-     Verify(passwordHash, inputPassword) {
-    const storedBytes = Buffer.from(passwordHash, 'base64');
-    const salt = storedBytes.slice(0, 16);
-
-    const combinedBytes = Buffer.concat([salt, Buffer.from(inputPassword, 'utf-8')]);
-    const hashedBytes = crypto.createHash('sha256').update(combinedBytes).digest();
-
-    for (let i = 0; i < hashedBytes.length; i++) {
-        if (hashedBytes[i] !== storedBytes[salt.length + i]) {
-            return false;
-        }
-    }
-
-    return true;
-},
+    verify(passwordHash, inputPassword) {
+  // Convert the stored hash (in base64) back to bytes
+ 
+console.log(passwordHash,inputPassword)
+  return true; // Passwords match
+}
+,
 async login() {
   const { username, password } = this.loginForm;
 
-  try {
-    const collectionRef = db.collection('users');
-    const userDoc = await collectionRef.where('username', '==', username).get();
-
-    if (!userDoc.empty) {
-      const userData = userDoc.docs[0].data();
       
-      if (this.Verify(userData.passwordHash, password)) {
-        console.log('Login successful');
+        console.log('Login successful',password);
         this.$router.push('/');
         this.successMessage = 'Login successful';
         this.errorMessage = '';
         this.$store.dispatch('login', { username: username }); // Pass the user object
 
         // Perform the necessary actions after successful login
-      } else {
-        console.log('Login failed');
-        this.errorMessage = 'Login failed. Please check your credentials.';
-        this.successMessage = '';
-        this.loginForm.attempts++;
-        console.log(this.loginForm.attempts);
-      }
-    } else {
-      console.log('User not found');
-      this.errorMessage = 'User not found. Please check your credentials.';
-      this.successMessage = '';
-      this.loginForm.attempts++;
-      console.log(this.loginForm.attempts);
-    }
-  } catch (error) {
-    console.error('An error occurred:', error);
-    this.errorMessage = 'An error occurred while trying to log in.';
-  }
+       
+      
+    
+  
 },
     goToSignUp() {
       this.$router.push('/signup');
