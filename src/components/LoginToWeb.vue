@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import 'C:/Users/janit/source/repos/Nayana mama front/my-vue-project/src/StyleSheet.css'
 import firebase from 'firebase/app'
 import 'firebase/auth'
