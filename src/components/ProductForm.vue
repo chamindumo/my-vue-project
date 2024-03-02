@@ -424,9 +424,7 @@ export default {
     this.formData.toWhom = newProductToEdit.toWhom;
     this.formData.residentsSignature = newProductToEdit.residentsSignature;
     this.formData.residentsSignatureDate = newProductToEdit.residentsSignatureDate;
-  } else {
-    this.resetForm();
-  }
+  } 
 },
 
                 immediate: true, // Invoke the handler immediately on component mount
@@ -439,21 +437,70 @@ export default {
       this.$refs.formproduct.validate(valid => {
         if (valid) {
           const newProduct = {
-            id: this.form.Id,
-            names: this.form.Names,
-            descriptions: this.form.Descriptions,
-            expirDate: this.formatDateToISO(this.form.expirDate),
-            isAvailable: this.form.isAvailable, // Fix typo in the property name
-            price: this.form.price,
-            imageData: this.form.ImageData,
-          };
+        name: this.formData.name,
+        rM: this.formData.rM,
+        branch: this.formData.branch,
+        phone: this.formData.phone,
+        dateOfBirth: this.formData.dateOfBirth,
+        placeOfBirth: this.formData.placeOfBirth,
+        maritalStatus: this.formData.maritalStatus,
+        admissionDate: this.formData.admissionDate,
+        socType: this.formData.socType,
+        religion: this.formData.religion,
+        dischargeDate: this.formData.dischargeDate,
+        ambStatus: this.formData.ambStatus,
+        powerOfAttorneyForHealthcare: this.formData.powerOfAttorneyForHealthcare,
+        powerOfAttorneyForHealthcareAddress: this.formData.powerOfAttorneyForHealthcareAddress,
+        powerOfAttorneyForHealthcarePhone: this.formData.powerOfAttorneyForHealthcarePhone,
+        powerOfAttorneyForHealthcareEmail: this.formData.powerOfAttorneyForHealthcareEmail,
+        powerOfAttorneyForHealthcareHospitalOfPreference: this.formData.powerOfAttorneyForHealthcareHospitalOfPreference,
+        responsiblePartyForFinance: this.formData.responsiblePartyForFinance,
+        responsiblePartyForFinanceAddress: this.formData.responsiblePartyForFinanceAddress,
+        responsiblePartyForFinancePhone: this.formData.responsiblePartyForFinancePhone,
+        responsiblePartyForFinanceEmail: this.formData.responsiblePartyForFinanceEmail,
+        medicalInsurence: this.formData.medicalInsurence,
+        medicare: this.formData.medicare,
+        primaryPhysician: this.formData.primaryPhysician,
+        primaryPhysicianAddress: this.formData.primaryPhysicianAddress,
+        primaryPhysicianPhone: this.formData.primaryPhysicianPhone,
+        specialist: this.formData.specialist,
+        specialistAddress: this.formData.specialistAddress,
+        specialistPhone: this.formData.specialistPhone,
+        specialistFax: this.formData.specialistFax,
+        dentist: this.formData.dentist,
+        dentistAddress: this.formData.dentistAddress,
+        dentistPhone: this.formData.dentistPhone,
+        dentistFax: this.formData.dentistFax,
+        allergies: this.formData.allergies,
+        explane: this.formData.explane,
+        tBTest: this.formData.tBTest,
+        tBTestDate: this.formData.tBTestDate,
+        tBTestResults: this.formData.tBTestResults,
+        emergencyContacts1Name: this.formData.emergencyContacts1Name,
+        emergencyContacts1Phone: this.formData.emergencyContacts1Phone,
+        emergencyContacts1Address: this.formData.emergencyContacts1Address,
+        emergencyContacts1Email: this.formData.emergencyContacts1Email,
+        emergencyContacts2Name: this.formData.emergencyContacts2Name,
+        emergencyContacts2Phone: this.formData.emergencyContacts2Phone,
+        emergencyContacts2Address: this.formData.emergencyContacts2Address,
+        emergencyContacts2Email: this.formData.emergencyContacts2Email,
+        mortuary: this.formData.mortuary,
+        mortuaryPhone: this.formData.mortuaryPhone,
+        cemetery: this.formData.cemetery,
+        cemeteryPhone: this.formData.cemeteryPhone,
+        dateExpired: this.formData.dateExpired,
+        timeExpired: this.formData.timeExpired,
+        dareBodyRelesed: this.formData.dareBodyRelesed,
+        toWhom: this.formData.toWhom,
+        residentsSignature: this.formData.residentsSignature,
+        residentsSignatureDate: this.formData.residentsSignatureDate,
+      };
 
           // Add the new product to the 'Registered' collection in Firestore
           db.collection('Registered').add(newProduct)
             .then(docRef => {
               console.log('Product added successfully with ID:', docRef.id);
               this.$emit('product-created', newProduct); // Emit the event
-              this.cancelEditProduct();
               this.$notify.success({
                 title: 'Product Submit',
                 message: 'The product was successfully created!',
@@ -535,7 +582,7 @@ export default {
 
 
       UpdateProduct() {
-      const updatedProduct = {
+        const updatedProduct = {
         name: this.formData.name,
         rM: this.formData.rM,
         branch: this.formData.branch,
@@ -595,7 +642,7 @@ export default {
         residentsSignatureDate: this.formData.residentsSignatureDate,
       };
 
-      const productRef = db.collection('products').doc(this.formData.phone);
+      const productRef = db.collection('Registered').doc('P7gXYx5WD4ddmCqhSbWd');
 
       productRef.update(updatedProduct)
         .then(() => {

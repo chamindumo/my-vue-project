@@ -86,8 +86,6 @@
       onSubmitBook() {
     // Validate the form using $refs.formbook.$validate
     console.log("hello1")
-    this.$refs.formbook.$validate(valid => {
-      if (valid) {
         const newBook = {
           Name: this.form.name,
           Email: this.form.emal,
@@ -113,9 +111,8 @@
           });
           console.log("hello3")
 
-      }
-    });
-  },
+      },
+
       validateBookId(rule, value, callback) {
       if (isNaN(value)) {
         callback(new Error('Book ID must be a number'));

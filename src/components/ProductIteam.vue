@@ -316,7 +316,7 @@ export default {
         },
         fetchData() {
   // Assuming 'products' is the name of your Firestore collection
-  const collectionRef = db.collection('products');
+  const collectionRef = db.collection('Registered');
 
   // Check if the branch is "All"
   if (this.userDetails.role === 'Admin' || this.userDetails.role === 'Super Admin') {
