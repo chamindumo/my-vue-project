@@ -53,7 +53,6 @@
 
 
 <script>
-import axios from 'axios';
 import moment from 'moment';
 import Headder from './Headder.vue';
 import Fotter from './Fotter.vue';
@@ -382,16 +381,18 @@ export default {
         deleteProductbyId(Id) {
           console.log('Product deleted successfully:',Id);
 
-            axios.delete(`https://localhost:7095/Regested/${Id}`)
-                .then(response => {
-                console.log('Resident deleted successfully:', response.data);
-                // Update the bookData array to remove the deleted book
-                this.productData = this.productData.filter(product => product.p !== Id);
+          const productRef = db.collection('products').doc(Id);
+
+          productRef.delete()
+            .then(() => {
+              console.log('Product deleted successfully:', Id);
+              // Update the productData array to remove the deleted product
+              this.productData = this.productData.filter(product => product.id !== Id);
             })
-                .catch(error => {
-                console.error('Error deleting Resident:', error);
+            .catch(error => {
+              console.error('Error deleting Product:', error);
             });
-            console.log(Id);
+          console.log(Id);
         },
         handleEditProduct(product) {
             this.productToEdit = product; // Set the bookToEdit prop when editing

@@ -29,6 +29,9 @@
   <script>
   import axios from 'axios';
   import 'C:/Users/janit/source/repos/Nayana mama front/my-vue-project/src/StyleSheet.css'
+  import firebase from 'firebase/app';
+  import 'firebase/firestore';
+  const db = firebase.firestore();
 
   export default {
     name: 'BookForm',
@@ -81,38 +84,38 @@
   },
     methods: {
       onSubmitBook() {
-        this.$refs.formbook.validate(valid => {
-          if (valid) {
-            const newBook = {
-              Name: this.form.name,
-              Email: this.form.emal,
-              Tell: this.form.tellNumber,
-              MedicalIssue: this.form.medical,
-              Branch: this.form.branch,
+    // Validate the form using $refs.formbook.$validate
+    console.log("hello1")
+    this.$refs.formbook.$validate(valid => {
+      if (valid) {
+        const newBook = {
+          Name: this.form.name,
+          Email: this.form.emal,
+          Tell: this.form.tellNumber,
+          MedicalIssue: this.form.medical,
+          Branch: this.form.branch,
+        };
+        console.log("hello2")
 
+        db.collection('newUsers').add(newBook)
+          .then(() => {
+            console.log('New Resident created successfully:', newBook);
+            this.$emit('book-created', newBook); // Emit the event
+            this.resetForm();
+            this.$notify.success({
+              title: 'Resident Created',
+              message: 'The Patient has been created successfully!',
+              offset: 100,
+            });
+          })
+          .catch(error => {
+            console.error('Error creating book:', error);
+          });
+          console.log("hello3")
 
-              
-            };
-  
-            axios.post('https://localhost:7095/Add/Newuser', newBook)
-              .then(response => {
-                console.log('New Resident created successfully:', response.data);
-                this.$emit('book-created', newBook); // Emit the event
-                this.resetForm();
-                this.$notify.success({
-                  title: 'Resident Created',
-                  message: 'The Pratient has been created successfully!',
-                  offset: 100,
-                });
-              })
-              .catch(error => {
-                console.error('Error creating book:', error);
-                
-              });
-          }
-        });
-      },
-  
+      }
+    });
+  },
       validateBookId(rule, value, callback) {
       if (isNaN(value)) {
         callback(new Error('Book ID must be a number'));

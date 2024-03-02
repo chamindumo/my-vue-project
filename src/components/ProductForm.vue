@@ -260,7 +260,9 @@
 import axios from 'axios';
 import { VueRecaptcha } from 'vue-recaptcha';
 import { mapState } from 'vuex';
-
+import firebase from 'firebase/app';
+  import 'firebase/firestore';
+  const db = firebase.firestore();
 
 export default {
   computed: {
@@ -436,50 +438,34 @@ export default {
     onSubmitProduct() {
       this.$refs.formproduct.validate(valid => {
         if (valid) {
-          this.email.productNmae = this.form.Names;
-          this.email.productId = this.form.Id;
-          this.email.email = this.userDetails.email;
-          console.log(this.email)
-
           const newProduct = {
-              id: this.form.Id,
-              names: this.form.Names,
-              descriptions: this.form.Descriptions,
-              expirDate: this.formatDateToISO(this.form.expirDate),
-              isAvalable: this.form.isAvalable,
-              price: this.form.price,
-              imageData: this.form.ImageData,
-
+            id: this.form.Id,
+            names: this.form.Names,
+            descriptions: this.form.Descriptions,
+            expirDate: this.formatDateToISO(this.form.expirDate),
+            isAvailable: this.form.isAvailable, // Fix typo in the property name
+            price: this.form.price,
+            imageData: this.form.ImageData,
           };
 
-        
-
-         
-          axios.post('https://localhost:7095/Add/Regested', this.formData)
-                      .then(response => {
-                      console.log('Product added successfully:', response.data);
-                      console.log(this.form)
-                      this.$emit('product-created', newProduct); // Emit the event
-                      this.cancelEditProduct();
-                      this.$notify.success({
-                          title: 'Product Submit',
-                          message: 'The product was successfully created!',
-                          offset: 100
-                      });
-                  })
-                      .catch(error => {
-                      console.error('Error adding product:', error);
-                  });
-                  console.log(newProduct);
-              }
-          });
-          console.log("hello ",this.email)
-
-          
-    
-
-
-      },
+          // Add the new product to the 'Registered' collection in Firestore
+          db.collection('Registered').add(newProduct)
+            .then(docRef => {
+              console.log('Product added successfully with ID:', docRef.id);
+              this.$emit('product-created', newProduct); // Emit the event
+              this.cancelEditProduct();
+              this.$notify.success({
+                title: 'Product Submit',
+                message: 'The product was successfully created!',
+                offset: 100,
+              });
+            })
+            .catch(error => {
+              console.error('Error adding product:', error);
+            });
+        }
+      });
+    },
 
       handleImageUpload(event) {
     const file = event.target.files[0];
@@ -609,16 +595,18 @@ export default {
         residentsSignatureDate: this.formData.residentsSignatureDate,
       };
 
-      axios.put(`https://localhost:7095/Add/Regested?tell=${this.formData.phone}`, updatedProduct)
-        .then(response => {
-          console.log('Product updated successfully:', response.data);
+      const productRef = db.collection('products').doc(this.formData.phone);
+
+      productRef.update(updatedProduct)
+        .then(() => {
+          console.log('Product updated successfully:', updatedProduct);
           this.$emit('product-updated', updatedProduct); // Emit an event for the updated product
         })
         .catch(error => {
           console.error('Error updating product:', error);
         });
-    
-},
+    },
+
 
       resetForm(){
         this.form= {
